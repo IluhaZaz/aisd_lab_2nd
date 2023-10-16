@@ -7,22 +7,21 @@ using namespace std;
 
 
 
-TEST(First, SwapCheck) {
+TEST(CyclicListTests, First) {
 	CyclicList<int> l;
-
-	Node<int> first (new int(1));
-
-	Node<int> second(new int(2));
-
-	Node<int> third(new int(3));
-
-	Node<int> fourth(new int(4));
-	
-	l.push_tail(&first);
-	l.push_head(&second);
-	l.push_head(&third);
-	l.push_tail(&fourth);
+	l.push_head(new Node<int>(new int(3)));
+	l.push_head(new Node<int>(new int(2)));
+	l.push_head(new Node<int>(new int(1)));
 	cout << l;
 
-	cout << l[0]<< l[1]<< l[2]<< l[3];
+	EXPECT_EQ(l.get_len(), 3);
+	EXPECT_EQ(2, *l[1]->get_data());
+
+	l[0]->set_data(new int(88));
+
+	EXPECT_EQ(*l[0]->get_data(), 88);
+
+	CyclicList<int> l2(l);
+
+	EXPECT_EQ(l, l2);
 }
