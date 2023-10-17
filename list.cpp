@@ -140,9 +140,53 @@ public:
 		l._tail->set_next(_head);
 		_head->set_prev(l._tail);
 		l._head->set_prev(_tail);
-		_tail->get_next(l.head);
+		_tail->set_next(l._head);
 
 		_head = l._head;
+	}
+
+	void push_tail(CyclicList<T> l) {
+		l._head->set_prev(_tail);
+		_tail->set_next(l._head);
+		l._tail->set_next(_head);
+		_head->set_prev(l._tail);
+
+		_tail = l._tail;
+	}
+
+	void pop_head() {
+		_tail->set_next(_head->get_next());
+		_head->get_next()->set_prev(_tail);
+		_head = _head->get_next();
+	}
+
+	void pop_tail() {
+		_head->set_prev(_tail->get_prev());
+		_tail->get_prev()->set_next(_head);
+		_tail = _tail->get_prev();
+	}
+
+	void delete_node(T val) {
+		Node<T>* node = _head;
+		int len = this->get_len();
+		for (int i = 0; i < len; i++) {
+			if (*node->get_data() == val) {
+				if (node == _head)
+				{
+					this->pop_head();
+				}
+				else if (node == _tail)
+				{
+					this->pop_tail();
+				}
+				else
+				{
+					node->get_prev()->set_next(node->get_next());
+					node->get_next()->set_prev(node->get_prev());
+				}
+			}
+			node = node->get_next();
+		}
 	}
 	
 	~CyclicList() = default;
@@ -183,7 +227,7 @@ public:
 		return len;
 	}
 
-	friend bool operator==(CyclicList<T> a, CyclicList<T> b) {
+	friend bool operator==(CyclicList<T>& a, CyclicList<T>& b) {
 		if (a.get_len() != b.get_len())
 			return false;
 		for (int i = 0; i < a.get_len(); i++) {
@@ -192,5 +236,4 @@ public:
 		}
 		return true;
 	}
-
 };

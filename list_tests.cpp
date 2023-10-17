@@ -10,6 +10,9 @@ using namespace std;
 TEST(CyclicListTests, First) {
 	CyclicList<int> l;
 	l.push_head(new Node<int>(new int(3)));
+
+	EXPECT_EQ(l.get_len(), 1);
+
 	l.push_head(new Node<int>(new int(2)));
 	l.push_head(new Node<int>(new int(1)));
 	cout << l;
@@ -23,5 +26,30 @@ TEST(CyclicListTests, First) {
 
 	CyclicList<int> l2(l);
 
-	EXPECT_EQ(l, l2);
+	EXPECT_TRUE(l == l2);
+	for (int i = 0; i < l.get_len(); i++) {
+		EXPECT_FALSE(l[i] == l2[i]);
+	}
+
+	CyclicList<int> l3;
+	l3.push_head(new Node<int>(new int(3)));
+	l3.push_head(new Node<int>(new int(2)));
+	l3.push_head(new Node<int>(new int(0)));
+
+	EXPECT_FALSE(l3 == l2);
+
+	l2.push_head(l3);
+	cout << l2;
+	l.push_tail(l3);
+	cout << l;
+	l.pop_head();
+	cout << l;
+	l.pop_tail();
+	cout << l;
+	l.push_head(new Node<int>(new int(2)));
+	cout << l;
+	l.delete_node(2);
+	cout << l;
+	l = l2;
+	cout << l;
 }
