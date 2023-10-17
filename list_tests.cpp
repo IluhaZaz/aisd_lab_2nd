@@ -53,3 +53,30 @@ TEST(CyclicListTests, First) {
 	l = l2;
 	cout << l;
 }
+
+TEST(CyclicListTests, Second) {
+	CyclicList<int> l;
+	l.push_head(new Node<int>(new int(3)));
+	l.push_head(new Node<int>(new int(2)));
+	l.push_head(new Node<int>(new int(0)));
+
+	CyclicList<int> l2 = l;
+	EXPECT_EQ(l2, l);
+	l2[1]->set_data(new int(5));
+	EXPECT_FALSE(l == l2);
+
+	int* vals = new int[4] {1, 2, 3, 4};
+	cout << CyclicList<int>(4, vals);
+	cout << CyclicList<float>(7);
+
+	Polynomial<int> p;
+	p.push_head(new Node<int>(new int(3)));
+	p.push_head(new Node<int>(new int(2)));
+	p.push_tail(new Node<int>(new int(0)));
+	cout << p;
+	Polynomial<int> p2(p);
+	EXPECT_EQ(p.get_value(), 230);
+	EXPECT_EQ(p, p2);
+	/*Polynomial<int> p3(4, vals);
+	cout << p3;*/
+}

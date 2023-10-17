@@ -4,22 +4,32 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <ctime>
+#include <random>
+#include <cmath>
 
 using namespace std;
 
-class string {
-private:
+template<typename T>
+std::uniform_int_distribution<T> getDice(std::true_type)
+{
+	return std::uniform_int_distribution<T>(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+}
 
-	char* _data;
-public:
+template<typename T>
+std::uniform_real_distribution<T> getDice(std::false_type)
+{
+	return std::uniform_real_distribution<T>(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+}
 
-	string() :_data(nullptr) {};
-	string(char* data) :_data(data) {};
-
-	friend string operator+(const string& first, const string& other) {
-		return string(strcat(first._data, other._data));
-	}
-};
+template<typename T>
+T random()
+{
+	std::random_device randomDevice;
+	std::mt19937_64 generator(randomDevice());
+	auto dice = getDice<T>(std::integral_constant<bool, std::numeric_limits<T>::is_integer>());
+	return dice(generator);
+}
 
 template <typename T>
 class Node {
@@ -81,7 +91,7 @@ public:
 
 template <typename T>
 class CyclicList {
-private:
+protected:
 
 	Node<T>* _head;
 	Node<T>* _tail;
@@ -102,6 +112,25 @@ public:
 			node = node->get_next();
 		}
 	}
+
+	CyclicList(int size, T* val) {
+		_head = nullptr;
+		_tail = nullptr;
+		for (int i = 0; i < size; i++) {
+			this->push_tail(new Node<T>(new T(val[i])));
+		}
+	}
+
+	CyclicList(int size) {
+		_head = nullptr;
+		_tail = nullptr;
+		for (int i = 0; i < size; i++) {
+			this->push_tail(new Node<T>(new T(random<T>())));
+		}
+	}
+
+
+	
 
 
 	void push_head(Node<T>* head) {
@@ -226,14 +255,46 @@ public:
 		}
 		return len;
 	}
+	
+	CyclicList<T>& operator=(CyclicList<T> rhs)
+	{
+		return rhs;
+	}
+	
+};
 
-	friend bool operator==(CyclicList<T>& a, CyclicList<T>& b) {
-		if (a.get_len() != b.get_len())
-			return false;
-		for (int i = 0; i < a.get_len(); i++) {
-			if (*a[i] != *b[i])
-				return false;
+template <typename T>
+class Polynomial : public CyclicList<T> {
+public:
+	/*
+	Polynomial(int size, T* val) {
+		_head = nullptr;
+		_tail = nullptr;
+		for (int i = 0; i < size; i++) {
+			this->push_tail(new Node<T>(new T(val[i])));
 		}
-		return true;
+	}
+	*/
+	float get_value() {
+		float val = 0;
+		Node<T>* node = this->_head;
+		int len = this->get_len();
+		for (int i = 0; i < len; i++) {
+			val += pow(10, len - i - 1) * (*node->get_data());
+			node = node->get_next();
+		}
+		return val;
 	}
 };
+
+template <typename T>
+bool operator == (CyclicList<T> a, CyclicList<T> b) {
+	if (a.get_len() != b.get_len())
+		return false;
+	for (int i = 0; i < a.get_len(); i++) {
+		if (*a[i] != *b[i])
+			return false;
+	}
+	return true;
+}
+
