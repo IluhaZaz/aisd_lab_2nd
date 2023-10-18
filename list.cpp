@@ -263,8 +263,8 @@ public:
 	
 };
 
-template <typename T>
-class Polynomial : public CyclicList<T> {
+
+class Polynomial : public CyclicList<int> {
 public:
 	/*
 	Polynomial(int size, T* val) {
@@ -277,7 +277,7 @@ public:
 	*/
 	float get_value() {
 		float val = 0;
-		Node<T>* node = this->_head;
+		Node<int>* node = this->_head;
 		int len = this->get_len();
 		for (int i = 0; i < len; i++) {
 			val += pow(10, len - i - 1) * (*node->get_data());

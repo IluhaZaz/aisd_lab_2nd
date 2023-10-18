@@ -5,78 +5,58 @@
 using namespace std;
 #define EPSILON 0.0001
 
-
-
-TEST(CyclicListTests, First) {
+TEST(CyclicListTests, ConstructorAndOperatorCheck) {
 	CyclicList<int> l;
-	l.push_head(new Node<int>(new int(3)));
+	l.push_tail(new Node<int>(new int(1)));
+	l.push_tail(new Node<int>(new int(2)));
+	l.push_tail(new Node<int>(new int(3)));
 
-	EXPECT_EQ(l.get_len(), 1);
+	CyclicList<int> l2(3, new int[3] {1, 2, 3});
+	EXPECT_EQ(l, l2);
 
-	l.push_head(new Node<int>(new int(2)));
-	l.push_head(new Node<int>(new int(1)));
-	cout << l;
-
-	EXPECT_EQ(l.get_len(), 3);
-	EXPECT_EQ(2, *l[1]->get_data());
-
-	l[0]->set_data(new int(88));
-
-	EXPECT_EQ(*l[0]->get_data(), 88);
-
-	CyclicList<int> l2(l);
-
-	EXPECT_TRUE(l == l2);
+	CyclicList<int> l3(l);
+	EXPECT_EQ(l, l3);
 	for (int i = 0; i < l.get_len(); i++) {
-		EXPECT_FALSE(l[i] == l2[i]);
+		EXPECT_FALSE(l2[i] == l3[i]);
 	}
 
-	CyclicList<int> l3;
-	l3.push_head(new Node<int>(new int(3)));
-	l3.push_head(new Node<int>(new int(2)));
-	l3.push_head(new Node<int>(new int(0)));
-
-	EXPECT_FALSE(l3 == l2);
-
-	l2.push_head(l3);
-	cout << l2;
-	l.push_tail(l3);
-	cout << l;
-	l.pop_head();
-	cout << l;
-	l.pop_tail();
-	cout << l;
-	l.push_head(new Node<int>(new int(2)));
-	cout << l;
-	l.delete_node(2);
-	cout << l;
-	l = l2;
-	cout << l;
+	CyclicList<int> l4 = l;
+	EXPECT_EQ(l, l4);
+	for (int i = 0; i < l.get_len(); i++) {
+		EXPECT_FALSE(l[i] == l4[i]);
+	}
 }
 
-TEST(CyclicListTests, Second) {
-	CyclicList<int> l;
-	l.push_head(new Node<int>(new int(3)));
-	l.push_head(new Node<int>(new int(2)));
-	l.push_head(new Node<int>(new int(0)));
+TEST(CyclicListTests, MethodsCheck) {
+	CyclicList<int> l(4, new int[4] {1, 2, 3, 4});
+	CyclicList<int> l2(3, new int[3] {1, 2, 3});
+	l.pop_tail();
+	EXPECT_EQ(l, l2);
 
-	CyclicList<int> l2 = l;
-	EXPECT_EQ(l2, l);
-	l2[1]->set_data(new int(5));
-	EXPECT_FALSE(l == l2);
+	CyclicList<int> l3(2, new int[2] {2, 3});
+	l2.pop_head();
+	EXPECT_EQ(l3, l2);
 
-	int* vals = new int[4] {1, 2, 3, 4};
-	cout << CyclicList<int>(4, vals);
-	cout << CyclicList<float>(7);
+	CyclicList<int> l4(5, new int[5] {2, 2, 3, 4, 2});
+	CyclicList<int> l5(2, new int[2] {3, 4});
+	l4.delete_node(2);
+	EXPECT_EQ(l4, l5);
+}
 
-	Polynomial<int> p;
-	p.push_head(new Node<int>(new int(3)));
-	p.push_head(new Node<int>(new int(2)));
-	p.push_tail(new Node<int>(new int(0)));
+TEST(PolynomynalTests, Check) {
+	Polynomial p(5);
 	cout << p;
-	Polynomial<int> p2(p);
-	EXPECT_EQ(p.get_value(), 230);
-	EXPECT_EQ(p, p2);
-	/*Polynomial<int> p3(4, vals);
-	cout << p3;*/
+	Polynomial p2;
+	p2.push_tail((new Node<int>(new int(1))));
+	p2.push_tail((new Node<int>(new int(2))));
+	p2.push_tail((new Node<int>(new int(3))));
+	Polynomial p3(p2);
+	for (int i = 0; i < p2.get_len(); i++) {
+		EXPECT_FALSE(p2[i] == p3[i]);
+		EXPECT_EQ(*p2[i]->get_data(), *p3[i]->get_data());
+	}
+
+	EXPECT_EQ(123, p3.get_value());
+
+//	Polynomial p4(3, new int[3] {1, 2, 3});
 }
